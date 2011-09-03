@@ -1,4 +1,4 @@
-This is a tool for converting "git log --graph" from pure ascii character graph to a canvas image.
+gitgraph.js a tool for converting "git log --graph" from pure ascii character graph to a canvas image.
 
 jQuery is only used as tool for extracting graph row from DOM
 
