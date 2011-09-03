@@ -5,7 +5,7 @@ var gitGraph = function (canvas, graphList, config) {
 	
 	if (typeof config === "undefined") {
 		config = {
-			unitSize: 19,
+			unitSize: 20,
 			lineWidth: 3,
 			nodeRadius: 4
 		}
@@ -13,12 +13,33 @@ var gitGraph = function (canvas, graphList, config) {
 	
 	var flows = [];
 	
-	canvas.height = graphList.length * config.unitSize;
-	
 	var ctx = canvas.getContext("2d");
 	
-	ctx.lineWidth = config.lineWidth;
-	ctx.lineJoin = "round";
+	var init = function () {
+		var maxWidth = 0;
+		
+		var i, j;
+		var l = graphList.length;
+		var ll = 0;
+		var cl = 0;
+		for (i = 0; i < l; i++) {
+			cl = 0;
+			ll = graphList[i].length;
+			for (j = 0; j < ll; j++) {
+				if (graphList[i][j] != "_" && graphList[i][j] != " ") {
+					++cl;
+				};
+			};
+			
+			maxWidth = cl > maxWidth ? cl : maxWidth;
+		};
+		
+		canvas.width = maxWidth * config.unitSize;
+		canvas.height = graphList.length * config.unitSize;
+		
+		ctx.lineWidth = config.lineWidth;
+		ctx.lineJoin = "round";
+	}
 	
 	var genRandomStr = function () {
 		var chars = "0123456789ABCDEF";
@@ -132,8 +153,6 @@ var gitGraph = function (canvas, graphList, config) {
 			nextRow = graphList[i + 1];
 			prevRow = graphList[i - 1];
 			
-			//console.log(i, flows)
-			
 			flowSwapPos = -1;
 			
 			//pre process begin
@@ -149,8 +168,6 @@ var gitGraph = function (canvas, graphList, config) {
 							(prevRow[colomnIndex + 2] == "/"))) {
 							
 							flowSwapPos = colomnIndex;
-							
-							//console.log("intersect")
 							
 							//swap two flow
 							tempFlow = {id:flows[flowSwapPos].id, color:flows[flowSwapPos].color};
@@ -203,7 +220,6 @@ var gitGraph = function (canvas, graphList, config) {
 					currentRow[colomnIndex + 1] == "/" && 
 					colomn == "|") { 
 					
-					//console.log("new flow", currentRow)
 					flows.splice(colomnIndex, 0, genNewFlow());
 				};
 				
@@ -213,8 +229,6 @@ var gitGraph = function (canvas, graphList, config) {
 					((lastLinePos = findColomn("|", currentRow)) != -1 ||
 					(lastLinePos = findColomn("*", currentRow)) != -1) &&
 					(lastLinePos < colomnIndex - 1)) {
-					
-					//console.log("xxxx", i, colomnIndex, lastLinePos, currentRow)
 					
 					while (++lastLinePos && currentRow[lastLinePos] == " ") {}
 					
@@ -233,8 +247,6 @@ var gitGraph = function (canvas, graphList, config) {
 				++colomnIndex;
 			}
 			
-			//console.log(i, flows)
-			
 			colomnIndex = 0;
 			
 			condenseIndex = 0;
@@ -246,18 +258,13 @@ var gitGraph = function (canvas, graphList, config) {
 			};
 			
 			if (flows.length > condenseIndex) {
-				//console.log("de", i, currentRow, condenseIndex + 1, flows.length, flows.length - condenseIndex - 1, flows)
 				flows.splice(condenseIndex, flows.length - condenseIndex);
 			};
-			
-			//console.log(flows)
 			
 			//draw
 			while (colomnIndex < currentRow.length) {
 				colomn = currentRow[colomnIndex];
-				prevColomn = currentRow[colomnIndex - 1]
-				
-				//console.log("aaa", colomnIndex, flows)
+				prevColomn = currentRow[colomnIndex - 1];
 				
 				if (currentRow[colomnIndex] == " ") {
 					currentRow.splice(colomnIndex, 1);
@@ -273,8 +280,6 @@ var gitGraph = function (canvas, graphList, config) {
 					
 					inlineIntersect = true;
 					
-					//console.log(i, colomn, colomnIndex, flows)
-					//console.log("xxx")
 					tempFlow = flows.splice(colomnIndex - 2, 1)[0];
 					flows.splice(colomnIndex - 1, 0, tempFlow);
 					currentRow.splice(colomnIndex - 2, 1);
@@ -285,8 +290,6 @@ var gitGraph = function (canvas, graphList, config) {
 				}
 				
 				colorIndex = colomnIndex;
-				
-				//console.log(colomn, colorIndex)
 				
 				color = flows[colorIndex].color;
 				
@@ -325,13 +328,10 @@ var gitGraph = function (canvas, graphList, config) {
 				++colomnIndex;
 			}
 			
-			//if (findColomn("_", currentRow) == -1) {
-				y -= config.unitSize;
-			//};
-			
-			//console.log("end", i)
+			y -= config.unitSize;
 		}
 	}
 	
+	init();
 	draw(graphList);
 };
