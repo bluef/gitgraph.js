@@ -4,6 +4,10 @@
   <meta charset='utf-8'>
 
   <title>bluef/git-graph-canvas @ GitHub</title>
+  
+  <script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="gitgraph.js"></script>
+		<script type="text/javascript" src="chart.js"></script>
 
   <style type="text/css">
     body {
@@ -27,6 +31,10 @@
     pre { background: #000; color: #fff; padding: 15px;}
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
+    
+    li {list-style-type:none}
+		
+	li .node-relation {font-family:'Bitstream Vera Sans Mono', 'Courier', monospace;}
   </style>
 </head>
 
@@ -50,14 +58,16 @@
     </div>
 
     <h2>License</h2>
-<p>BSD</p>
-<h2>Authors</h2>
-<p>Terrence Lee (kill889@gmail.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Terrence Lee (kill889@gmail.com)<br/>      </p>
-
-
-    <h2>Download</h2>
+	<p>BSD</p>
+	<h2>Authors</h2>
+	<p>Terrence Lee (kill889@gmail.com)
+	<br/>
+	<br/>      </p>
+	<h2>Contact</h2>
+	<p>Terrence Lee (kill889@gmail.com)
+	<br/>      </p>
+	
+	 <h2>Download</h2>
     <p>
       You can download this project in either
       <a href="http://github.com/bluef/git-graph-canvas/zipball/master">zip</a> or
@@ -71,6 +81,215 @@
     <div class="footer">
       get the source code on GitHub : <a href="http://github.com/bluef/git-graph-canvas">bluef/git-graph-canvas</a>
     </div>
+	
+	<h2>DEMO</h2>
+	
+	<canvas id="graph-canvas" width="110" height="600" style="float:left">
+	</canvas>
+	
+	<div>
+		<ul id="graph-raw-list" style="float:left">
+			<li>
+				<span class="node-relation">*  </span>
+			</li><li>
+				<span class="node-relation">|\  </span>
+			</li><li>
+				<span class="node-relation">* \  </span>
+			</li><li>
+				<span class="node-relation">|\ \  </span>
+			</li><li>
+				<span class="node-relation">* | |</span>
+			</li><li>
+				<span class="node-relation">| | *  </span>
+			</li><li>
+				<span class="node-relation">| | |\  </span>
+			</li><li>
+				<span class="node-relation">| |_|/  </span>
+			</li><li>
+				<span class="node-relation">|/| |   </span>
+			</li><li>
+				<span class="node-relation">| | *</span>
+			</li><li>
+				<span class="node-relation">| * |</span>
+			</li><li>
+				<span class="node-relation">| * |  </span>
+			</li><li>
+				<span class="node-relation">| |\ \  </span>
+			</li><li>
+				<span class="node-relation">| |/ /  </span>
+			</li><li>
+				<span class="node-relation">|/| |   </span>
+			</li><li>
+				<span class="node-relation">* | |</span>
+			</li><li>
+				<span class="node-relation">* | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \  </span>
+			</li><li>
+				<span class="node-relation">| |_|/  </span>
+			</li><li>
+				<span class="node-relation">|/| |   </span>
+			</li><li>
+				<span class="node-relation">* | |</span>
+			</li><li>
+				<span class="node-relation">| | *</span>
+			</li><li>
+				<span class="node-relation">* | |</span>
+			</li><li>
+				<span class="node-relation">| |/  </span>
+			</li><li>
+				<span class="node-relation">|/|   </span>
+			</li><li>
+				<span class="node-relation">* |</span>
+			</li><li>
+				<span class="node-relation">| | *</span>
+			</li><li>
+				<span class="node-relation">| | *</span>
+			</li><li>
+				<span class="node-relation">* | |</span>
+			</li><li>
+				<span class="node-relation">| |/  </span>
+			</li><li>
+				<span class="node-relation">|/|   </span>
+			</li><li>
+				<span class="node-relation">| | *  </span>
+			</li><li>
+				<span class="node-relation">| | |\  </span>
+			</li><li>
+				<span class="node-relation">| |_|/  </span>
+			</li><li>
+				<span class="node-relation">|/| |   </span>
+			</li><li>
+				<span class="node-relation">* | |</span>
+			</li><li>
+				<span class="node-relation">* | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \  </span>
+			</li><li>
+				<span class="node-relation">| * | |</span>
+			</li><li>
+				<span class="node-relation">* | | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \ \  </span>
+			</li><li>
+				<span class="node-relation">| |_|_|/  </span>
+			</li><li>
+				<span class="node-relation">|/| | |   </span>
+			</li><li>
+				<span class="node-relation">| * | |</span>
+			</li><li>
+				<span class="node-relation">| | * |  </span>
+			</li><li>
+				<span class="node-relation">| | |\ \  </span>
+			</li><li>
+				<span class="node-relation">| | |/ /  </span>
+			</li><li>
+				<span class="node-relation">| |/| |   </span>
+			</li><li>
+				<span class="node-relation">| | * |</span>
+			</li><li>
+				<span class="node-relation">| * | |</span>
+			</li><li>
+				<span class="node-relation">| | | *  </span>
+			</li><li>
+				<span class="node-relation">| | | |\  </span>
+			</li><li>
+				<span class="node-relation">| |_|_|/  </span>
+			</li><li>
+				<span class="node-relation">|/| | |   </span>
+			</li><li>
+				<span class="node-relation">* | | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \ \  </span>
+			</li><li>
+				<span class="node-relation">| |/ / /  </span>
+			</li><li>
+				<span class="node-relation">| | | *</span>
+			</li><li>
+				<span class="node-relation">| |_|/  </span>
+			</li><li>
+				<span class="node-relation">|/| |   </span>
+			</li><li>
+				<span class="node-relation">| * |</span>
+			</li><li>
+				<span class="node-relation">* | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \  </span>
+			</li><li>
+				<span class="node-relation">| |/ /  </span>
+			</li><li>
+				<span class="node-relation">* | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \  </span>
+			</li><li>
+				<span class="node-relation">| | | | *</span>
+			</li><li>
+				<span class="node-relation">| * | | |</span>
+			</li><li>
+				<span class="node-relation">|  / / /  </span>
+			</li>
+			</li><li>
+				<span class="node-relation">| * | |</span>
+			</li><li>
+				<span class="node-relation">| | | *</span>
+			</li><li>
+				<span class="node-relation">| |_|/  </span>
+			</li><li>
+				<span class="node-relation">|/| |   </span>
+			</li><li>
+				<span class="node-relation">* | |</span>
+			</li><li>
+				<span class="node-relation">* | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \  </span>
+			</li><li>
+				<span class="node-relation">| | |/  </span>
+			</li><li>
+				<span class="node-relation">| |/|   </span>
+			</li><li>
+				<span class="node-relation">| * |  </span>
+			</li><li>
+				<span class="node-relation">| |\ \  </span>
+			</li><li>
+				<span class="node-relation">| | |/  </span>
+			</li><li>
+				<span class="node-relation">| | *</span>
+			</li><li>
+				<span class="node-relation">* | |  </span>
+			</li><li>
+				<span class="node-relation">|\ \ \  </span>
+			</li><li>
+				<span class="node-relation">| |/ /  </span>
+			</li><li>
+				<span class="node-relation">|/| /   </span>
+			</li><li>
+				<span class="node-relation">| |/    </span>
+			</li><li>
+				<span class="node-relation">* |</span>
+			</li><li>
+				<span class="node-relation">| *</span>
+			</li><li>
+				<span class="node-relation">| *</span>
+			</li><li>
+				<span class="node-relation">* |  </span>
+			</li><li>
+				<span class="node-relation">|\ \  </span>
+			</li><li>
+				<span class="node-relation">| |/  </span>
+			</li><li>
+				<span class="node-relation">| *</span>
+			</li><li>
+				<span class="node-relation">|/  </span>
+			</li><li>
+				<span class="node-relation">*</span>
+			</li><li>
+				<span class="node-relation">*</span>
+			</li>
+		</ul>
+	</div>
+
+
+   
 
   </div>
 

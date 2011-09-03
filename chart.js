@@ -6,10 +6,6 @@ $(document).ready(function () {
 		return;
 	}
 	
-	$("#graph-raw-list li").each(function (i) {
-		$(this).append("<span>" + ($("#graph-raw-list li").length - i - 1) + "</span>")
-	})
-	
 	$("#graph-raw-list li span.node-relation").each(function () {
 		row = $.trim($(this).text().replace(/\s+/g, " ")).split("");
 		
