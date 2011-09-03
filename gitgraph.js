@@ -5,7 +5,7 @@ var gitGraph = function (canvas, graphList, config) {
 	
 	if (typeof config === "undefined") {
 		config = {
-			unitSize: 19,
+			unitSize: 20,
 			lineWidth: 3,
 			nodeRadius: 4
 		}
@@ -13,13 +13,33 @@ var gitGraph = function (canvas, graphList, config) {
 	
 	var flows = [];
 	
-	canvas.height = graphList.length * config.unitSize;
-	
 	var ctx = canvas.getContext("2d");
 	
-	ctx.lineWidth = config.lineWidth;
-	ctx.lineJoin = "round";
-	ctx.lineCap = "round";
+	var init = function () {
+		var maxWidth = 0;
+		
+		var i, j;
+		var l = graphList.length;
+		var ll = 0;
+		var cl = 0;
+		for (i = 0; i < l; i++) {
+			cl = 0;
+			ll = graphList[i].length;
+			for (j = 0; j < ll; j++) {
+				if (graphList[i][j] != "_" && graphList[i][j] != " ") {
+					++cl;
+				};
+			};
+			
+			maxWidth = cl > maxWidth ? cl : maxWidth;
+		};
+		
+		canvas.width = maxWidth * config.unitSize;
+		canvas.height = graphList.length * config.unitSize;
+		
+		ctx.lineWidth = config.lineWidth;
+		ctx.lineJoin = "round";
+	}
 	
 	var genRandomStr = function () {
 		var chars = "0123456789ABCDEF";
@@ -61,6 +81,10 @@ var gitGraph = function (canvas, graphList, config) {
 	}
 	
 	//draw method
+	var drawBlank = function (x, y) {
+		//do nothing
+	}
+	
 	var drawLineRight = function (x, y, color) {
 		ctx.strokeStyle = color;
 		ctx.beginPath();
@@ -104,7 +128,6 @@ var gitGraph = function (canvas, graphList, config) {
 		ctx.stroke();
 	}
 	
-	//main method
 	var draw = function (graphList) {
 		var colomn, colomnIndex, prevColomn;
 		var x, y;
@@ -146,7 +169,7 @@ var gitGraph = function (canvas, graphList, config) {
 							
 							flowSwapPos = colomnIndex;
 							
-							//swap two flows
+							//swap two flow
 							tempFlow = {id:flows[flowSwapPos].id, color:flows[flowSwapPos].color};
 							
 							flows[flowSwapPos].id = flows[flowSwapPos + 1].id;
@@ -196,7 +219,6 @@ var gitGraph = function (canvas, graphList, config) {
 					currentRow[colomnIndex + 1] && 
 					currentRow[colomnIndex + 1] == "/" && 
 					colomn == "|") { 
-					
 					
 					flows.splice(colomnIndex, 0, genNewFlow());
 				};
@@ -310,5 +332,6 @@ var gitGraph = function (canvas, graphList, config) {
 		}
 	}
 	
+	init();
 	draw(graphList);
 };
