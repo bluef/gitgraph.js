@@ -39,6 +39,7 @@ var gitGraph = function (canvas, graphList, config) {
 		
 		ctx.lineWidth = config.lineWidth;
 		ctx.lineJoin = "round";
+		ctx.lineCap = "round";
 	}
 	
 	var genRandomStr = function () {
