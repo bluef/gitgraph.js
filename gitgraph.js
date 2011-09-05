@@ -24,6 +24,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+//for compatibility
+if (!Array.prototype.filter) {
+	Array.prototype.filter = function(fun /*, thisp*/) {
+		var len = this.length;
+		if (typeof fun != "function") {
+			throw new TypeError();
+		}
+		
+		var res = [];
+		var thisp = arguments[1];
+		for (var i = 0; i < len; i++) {
+			if (i in this) {
+				var val = this[i]; // in case fun mutates this
+				if (fun.call(thisp, val, i, this)) {
+					res.push(val);
+				}
+			}
+		}
+		
+		return res;
+	}
+}
+
 var gitGraph = function (canvas, rawGraphList, config) {
 	if (!canvas.getContext) {
 		return;
@@ -150,7 +174,7 @@ var gitGraph = function (canvas, rawGraphList, config) {
 	};
 	
 	var draw = function (graphList) {
-		var colomn, colomnIndex, prevColomn;
+		var colomn, colomnIndex, prevColomn, condenseIndex;
 		var x, y;
 		var color;
 		var nodePos, outPos;
@@ -160,6 +184,7 @@ var gitGraph = function (canvas, rawGraphList, config) {
 		var flowSwapPos = -1;
 		var lastLinePos;
 		var i, k;
+		var condenseLength;
 		
 		var inlineIntersect = false;
 		
@@ -179,10 +204,9 @@ var gitGraph = function (canvas, rawGraphList, config) {
 			//pre process begin
 			//use last row for analysing
 			if (prevRow) {
-				
 				if (!inlineIntersect) {
 					//intersect might happen
-					for (colomnIndex = 0; colomnIndex < prevRow.length; colomnIndex++) {
+					for (colomnIndex = 0; colomnIndex < prevRowLength; colomnIndex++) {
 						if (prevRow[colomnIndex + 1] && 
 							(prevRow[colomnIndex] === "/" && prevRow[colomnIndex + 1] === "|") || 
 							((prevRow[colomnIndex] === "_" && prevRow[colomnIndex + 1] === "|") &&
@@ -223,25 +247,21 @@ var gitGraph = function (canvas, rawGraphList, config) {
 						flows.splice(nodePos + 1, 1);
 					}
 				}
-			}
+			} //done with the previous row
 			
 			prevRowLength = currentRow.length; //store for next round
 			colomnIndex = 0; //reset index
-			var condenseIndex = 0;
+			condenseIndex = 0;
 			while (colomnIndex < currentRow.length) {
 				colomn = currentRow[colomnIndex];
 				
-				if (colomn !== " ") {
-					++condenseIndex;
-				}
-				
 				//create new flow only when no intersetc happened
 				if (flowSwapPos === -1 &&
-					currentRow[colomnIndex + 1] && 
-					currentRow[colomnIndex + 1] === "/" && 
-					colomn === "|") { 
+					colomn === "/" &&
+					currentRow[colomnIndex - 1] && 
+					currentRow[colomnIndex - 1] === "|") {
 					
-					flows.splice(colomnIndex, 0, genNewFlow());
+					flows.splice(condenseIndex, 0, genNewFlow());
 				}
 				
 				//change \ to | when it's in the last position of the whole row
@@ -261,26 +281,25 @@ var gitGraph = function (canvas, rawGraphList, config) {
 				if (colomn === "*" &&
 					prevRow && 
 					prevRow[condenseIndex + 1] === "\\") {
-					flows.splice(condenseIndex, 1);
-					
+					flows.splice(condenseIndex + 1, 1);
+				}
+				
+				if (colomn !== " ") {
+					++condenseIndex;
 				}
 				
 				++colomnIndex;
 			}
 			
+			condenseLength = currentRow.filter(function (val) {
+				return (val !== " "  && val !== "_")
+			}).length;
+			
+			if (flows.length > condenseLength) {
+				flows.splice(condenseLength, flows.length - condenseLength);
+			}
+			
 			colomnIndex = 0;
-			
-			condenseIndex = 0;
-			
-			for (k = 0; k < currentRow.length; k++) {
-				if (currentRow[k] !== " " && currentRow[k] !== "_") {
-					condenseIndex++;
-				}
-			}
-			
-			if (flows.length > condenseIndex) {
-				flows.splice(condenseIndex, flows.length - condenseIndex);
-			}
 			
 			//draw
 			while (colomnIndex < currentRow.length) {
