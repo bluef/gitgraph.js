@@ -9,5 +9,5 @@ $(document).ready(function () {
 		graphList.push($(this).text());
 	})
 	
-	gitGraph(document.getElementById('graph-canvas'), graphList)
+	gitGraph(document.getElementById('graph-canvas'), graphList);
 })
