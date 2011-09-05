@@ -177,13 +177,13 @@ var gitGraph = function (canvas, rawGraphList, config) {
 				}
 				
 				if (prevRowLength < currentRow.length &&
-					((nodePos = findColomn("*", currentRow)) !== -1) &&
-					((nodePos = findColomn("_", currentRow)) === -1)) {
+					((nodePos = findColomn("*", currentRow)) !== -1 &&
+					(findColomn("_", currentRow) === -1))) {
 					
 					if ((outPos = findColomn("/", prevRow)) === -1 || 
 						(outPos !== -1 && prevRow[outPos - 1] && prevRow[outPos - 1] !== "|")) {
 						
-						flows.splice(nodePos, 0, genNewFlow());
+						flows.splice(nodePos - 1, 0, genNewFlow());
 					}
 				}
 				
