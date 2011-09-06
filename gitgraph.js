@@ -237,6 +237,18 @@ var gitGraph = function (canvas, rawGraphList, config) {
 					++condensePrevLength;
 				};
 				
+				if (colomn === " " && 
+					currentRow[colomnIndex + 1] &&
+					currentRow[colomnIndex + 1] === "_" &&
+					currentRow[colomnIndex - 1] && 
+					currentRow[colomnIndex - 1] === "|") {
+					
+					currentRow.splice(colomnIndex, 1);
+					currentRow[colomnIndex] = "/";
+					
+					colomn = "/";
+				};
+				
 				//create new flow only when no intersetc happened
 				if (flowSwapPos === -1 &&
 					colomn === "/" &&
@@ -246,11 +258,10 @@ var gitGraph = function (canvas, rawGraphList, config) {
 					flows.splice(condenseIndex, 0, genNewFlow());
 				}
 				
-				//change \ to | when it's in the last position of the whole row
-				if ((colomnIndex === currentRow.length - 1) &&
+				//change \ and / to | when it's in the last position of the whole row
+				if ((condenseIndex === condenseLength - 1) &&
 					(colomn === "/" || colomn === "\\") &&
-					((lastLinePos = findColomn("|", currentRow)) !== -1 ||
-					(lastLinePos = findColomn("*", currentRow)) !== -1) &&
+					(lastLinePos = Math.max(findColomn("|", currentRow), findColomn("*", currentRow))) !== -1 &&
 					(lastLinePos < colomnIndex - 1)) {
 					
 					while (++lastLinePos && currentRow[lastLinePos] === " ") {}
