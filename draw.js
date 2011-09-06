@@ -10,4 +10,8 @@ $(document).ready(function () {
 	})
 	
 	gitGraph(document.getElementById('graph-canvas'), graphList);
+	
+	if ($("#rev-container")) {
+		$("#rev-container").css("width", document.body.clientWidth - document.getElementById('graph-canvas').width);
+	}
 })
