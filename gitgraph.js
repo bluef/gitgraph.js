@@ -25,29 +25,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//for compatibility
-if (!Array.prototype.filter) {
-	Array.prototype.filter = function(fun /*, thisp*/) {
-		var len = this.length;
-		if (typeof fun != "function") {
-			throw new TypeError();
-		}
-		
-		var res = [];
-		var thisp = arguments[1];
-		for (var i = 0; i < len; i++) {
-			if (i in this) {
-				var val = this[i]; // in case fun mutates this
-				if (fun.call(thisp, val, i, this)) {
-					res.push(val);
-				}
-			}
-		}
-		
-		return res;
-	}
-}
-
 var gitGraph = function (canvas, rawGraphList, config) {
 	if (!canvas.getContext) {
 		return;
@@ -184,7 +161,7 @@ var gitGraph = function (canvas, rawGraphList, config) {
 		var flowSwapPos = -1;
 		var lastLinePos;
 		var i, k;
-		var condenseLength;
+		var condenseLength, condensePrevLength = 0;
 		
 		var inlineIntersect = false;
 		
@@ -200,6 +177,10 @@ var gitGraph = function (canvas, rawGraphList, config) {
 			prevRow = graphList[i - 1];
 			
 			flowSwapPos = -1;
+			
+			condenseLength = currentRow.filter(function (val) {
+				return (val !== " "  && val !== "_")
+			}).length;
 			
 			//pre process begin
 			//use last row for analysing
@@ -226,15 +207,11 @@ var gitGraph = function (canvas, rawGraphList, config) {
 					}
 				}
 				
-				if (prevRowLength < currentRow.length &&
+				if (condensePrevLength < condenseLength &&
 					((nodePos = findColomn("*", currentRow)) !== -1 &&
 					(findColomn("_", currentRow) === -1))) {
 					
-					if ((outPos = findColomn("/", prevRow)) === -1 || 
-						(outPos !== -1 && prevRow[outPos - 1] && prevRow[outPos - 1] !== "|")) {
-						
-						flows.splice(nodePos - 1, 0, genNewFlow());
-					}
+					flows.splice(nodePos - 1, 0, genNewFlow());
 				}
 				
 				if (prevRowLength > currentRow.length &&
@@ -252,8 +229,13 @@ var gitGraph = function (canvas, rawGraphList, config) {
 			prevRowLength = currentRow.length; //store for next round
 			colomnIndex = 0; //reset index
 			condenseIndex = 0;
+			condensePrevLength = 0;
 			while (colomnIndex < currentRow.length) {
 				colomn = currentRow[colomnIndex];
+				
+				if (colomn !== " " && colomn !== "_") {
+					++condensePrevLength;
+				};
 				
 				//create new flow only when no intersetc happened
 				if (flowSwapPos === -1 &&
