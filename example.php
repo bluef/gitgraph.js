@@ -3,7 +3,7 @@
 	
 	chdir(GIT_REPO_PATH);
 	
-	$cmd = 'git log --graph --date-order -C -M --all --date=iso --pretty=format:"B[%d] C[%H] D[%ad] A[%an] E[%ae] S[%s]"';
+	$cmd = 'git log --graph --date-order -C -M -n 100 --date=iso --pretty=format:"B[%d] C[%H] D[%ad] A[%an] E[%ae] S[%s]"';
 	
 	ob_clean();
 	ob_start();
@@ -27,12 +27,14 @@
 			"subject"=>$output[9]
 		);
 	}
+	
+	$title = "Git Graph of " . substr(GIT_REPO_PATH, strrpos(GIT_REPO_PATH, "/") + 1);
 ?>
 
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Git Graph</title>
+		<title><?php echo $title; ?></title>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="gitgraph.js"></script>
@@ -43,7 +45,7 @@
 	<body>
 		<div id="header">
 			<h2>
-				Git Graph of <?php echo substr(GIT_REPO_PATH, strrpos(GIT_REPO_PATH, "/") + 1); ?>
+				<?php echo $title; ?>
 			</h2>
 		</div>
 		<div id="git-graph-container">

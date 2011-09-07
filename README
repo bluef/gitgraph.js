@@ -1,5 +1,0 @@
-gitgraph.js a tool for converting "git log --graph" from pure ascii characters graph to a canvas image.
-
-jQuery is only used as tool for extracting graph row from DOM
-
-Check http://bluef.github.com/gitgraph.js and canvas.html for demo
