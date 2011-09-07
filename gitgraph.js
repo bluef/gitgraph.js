@@ -171,19 +171,24 @@ var gitGraph = function (canvas, rawGraphList, config) {
 		var nodePos, outPos;
 		var tempFlow;
 		var prevRowLength = 0;
-		var l = graphList.length;
 		var flowSwapPos = -1;
 		var lastLinePos;
-		var i, k;
+		var i, k, l;
 		var condenseCurrentLength, condensePrevLength = 0, condenseNextLength = 0;
 		
 		var inlineIntersect = false;
 		
-		flows.push(genNewFlow()); //first flow
+		//initiate for first row
+		for (i = 0, l = graphList[0].length; i < l; i++) {
+			if (graphList[0][i] !== "_" && graphList[0][i] !== " ") {
+				flows.push(genNewFlow());
+			}
+		}
 		
-		y = canvas.height - 0.5 * config.unitSize;
+		y = canvas.height - config.unitSize * 0.5;
 		
-		for (i = 0; i < l; i++) {
+		//iterate
+		for (i = 0, l = graphList.length; i < l; i++) {
 			x = config.unitSize * 0.5;
 			
 			currentRow = graphList[i];
@@ -281,7 +286,6 @@ var gitGraph = function (canvas, rawGraphList, config) {
 				}
 				
 				//change \ and / to | when it's in the last position of the whole row
-				
 				if (colomn === "/" || colomn === "\\") {
 					if (!(colomn === "/" && findBranchOut(nextRow) === -1)) {
 						if ((lastLinePos = Math.max(findColomn("|", currentRow), 
@@ -314,13 +318,14 @@ var gitGraph = function (canvas, rawGraphList, config) {
 				return (val !== " "  && val !== "_")
 			}).length;
 			
+			//do some clean up
 			if (flows.length > condenseCurrentLength) {
 				flows.splice(condenseCurrentLength, flows.length - condenseCurrentLength);
 			}
 			
 			colomnIndex = 0;
 			
-			//draw
+			//a little inline analysis and draw process
 			while (colomnIndex < currentRow.length) {
 				colomn = currentRow[colomnIndex];
 				prevColomn = currentRow[colomnIndex - 1];

@@ -1,3 +1,23 @@
+gitgraph.js
+=======
+gitgraph.js a tool for converting "git log --graph" from pure ascii characters graph to a canvas image.
+
+Quick Start (with PHP demo)
+-----
+1. Get a copy of this repo (clone or [download tarball](http://github.com/bluef/gitgraph.js/tarball/master))
+2. Put everything in the directory where PHP file can be excuted
+3. Edit example.php, change the value of GIT_REPO_PATH on line 2 to the path of your repo
+	
+	define("GIT_REPO_PATH", "/path/to/your/repo");
+	
+4. Go visit example.php in your browser
+
+Miscellaneous
+------------
+jQuery is only for parsing DOM
+
+License
+-------
 Copyright (c) 2011, Terrence Lee <kill889@gmail.com>
 All rights reserved.
 
