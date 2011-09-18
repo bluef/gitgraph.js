@@ -38,7 +38,7 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="gitgraph.js"></script>
-		<script type="text/javascript" src="chart.js"></script>
+		<script type="text/javascript" src="draw.js"></script>
 		<link href="gitgraph.css" rel="stylesheet" type="text/css">
 	</head>
 	
