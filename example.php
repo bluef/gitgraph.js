@@ -3,7 +3,7 @@
 	
 	chdir(GIT_REPO_PATH);
 	
-	$cmd = 'git log --graph --date-order -all -C -M -n 100 --date=iso --pretty=format:"B[%d] C[%H] D[%ad] A[%an] E[%ae] S[%s]"';
+	$cmd = 'git log --graph --date-order --all -C -M -n 100 --date=iso --pretty=format:"B[%d] C[%H] D[%ad] A[%an] E[%ae] S[%s]"';
 	
 	ob_clean();
 	ob_start();
