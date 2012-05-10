@@ -9,7 +9,7 @@
 	}
 	$repo_name = basename($repo_dir);
 
-	$cmd = 'git log --graph --date-order --all -C -M -n 100 --date=iso --pretty=format:"B[%d] C[%H] D[%ad] A[%an] E[%ae] S[%s]"';
+	$cmd = 'git log --graph --date-order --all -C -M -n 100 --date=iso --pretty=format:"B[%d] C[%H] D[%ad] A[%an] E[%ae] H[%h] S[%s]"';
 
 	@ob_clean();
 	ob_start();
@@ -20,7 +20,7 @@
 	$graphItems = array();
 
 	foreach ($rawRows as $row) {
-		if (preg_match("/^(.+?)(\s(B\[(.*?)\])? C\[(.+?)\] D\[(.+?)\] A\[(.+?)\] E\[(.+?)\] S\[(.+?)\])?$/", $row, $output)) {
+		if (preg_match("/^(.+?)(\s(B\[(.*?)\])? C\[(.+?)\] D\[(.+?)\] A\[(.+?)\] E\[(.+?)\] H\[(.+?)\] S\[(.+?)\])?$/", $row, $output)) {
 			if (!isset($output[4])) {
 				$graphItems[] = array(
 					"relation"=>$output[1]
@@ -34,7 +34,8 @@
 				"date"=>$output[6],
 				"author"=>$output[7],
 				"author_email"=>$output[8],
-				"subject"=>$output[9]
+				"short_rev"=>$output[9],
+				"subject"=>$output[10]
 			);
 		}
 	}
@@ -78,7 +79,7 @@
 					foreach ($graphItems as $graphItem) {
 						echo "<li>";
 						if (isset($graphItem['rev'])) {
-							echo "<strong>" . $graphItem['branch'] . "</strong> <em>" . $graphItem['subject'] . "</em> by <span class=\"author\">" . $graphItem['author'] . " &lt;" . $graphItem['author_email'] . "&gt;</span>  <span class=\"time\">" . $graphItem['date'] . "</span>";
+							echo "<code>".$graphItem['short_rev']."</code> <strong>" . $graphItem['branch'] . "</strong> <em>" . $graphItem['subject'] . "</em> by <span class=\"author\">" . $graphItem['author'] . " &lt;" . $graphItem['author_email'] . "&gt;</span>  <span class=\"time\">" . $graphItem['date'] . "</span>";
 						} else {
 							echo "<span />";
 						}
