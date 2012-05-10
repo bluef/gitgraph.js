@@ -11,27 +11,32 @@
 
 	$cmd = 'git log --graph --date-order --all -C -M -n 100 --date=iso --pretty=format:"B[%d] C[%H] D[%ad] A[%an] E[%ae] S[%s]"';
 
-	ob_clean();
+	@ob_clean();
 	ob_start();
 	passthru($cmd . ' 2>&1');
-	$o = ob_get_contents();
-	ob_end_clean();
+	$o = ob_get_clean();
 
 	$rawRows = explode("\n", $o);
 	$graphItems = array();
 
 	foreach ($rawRows as $row) {
-		preg_match("/^(.+?)(\s(B\[(.*?)\])? C\[(.+?)\] D\[(.+?)\] A\[(.+?)\] E\[(.+?)\] S\[(.+?)\])?$/", $row, $output);
-
-		$graphItems[] = array(
-			"relation"=>$output[1],
-			"branch"=>$output[4],
-			"rev"=>$output[5],
-			"date"=>$output[6],
-			"author"=>$output[7],
-			"author_email"=>$output[8],
-			"subject"=>$output[9]
-		);
+		if (preg_match("/^(.+?)(\s(B\[(.*?)\])? C\[(.+?)\] D\[(.+?)\] A\[(.+?)\] E\[(.+?)\] S\[(.+?)\])?$/", $row, $output)) {
+			if (!isset($output[4])) {
+				$graphItems[] = array(
+					"relation"=>$output[1]
+				);
+				continue;
+			}
+			$graphItems[] = array(
+				"relation"=>$output[1],
+				"branch"=>$output[4],
+				"rev"=>$output[5],
+				"date"=>$output[6],
+				"author"=>$output[7],
+				"author_email"=>$output[8],
+				"subject"=>$output[9]
+			);
+		}
 	}
 
 	$title = "Git Graph of " . $repo_name;
@@ -72,7 +77,7 @@
 				<?php
 					foreach ($graphItems as $graphItem) {
 						echo "<li>";
-						if ($graphItem['rev']) {
+						if (isset($graphItem['rev'])) {
 							echo "<strong>" . $graphItem['branch'] . "</strong> <em>" . $graphItem['subject'] . "</em> by <span class=\"author\">" . $graphItem['author'] . " &lt;" . $graphItem['author_email'] . "&gt;</span>  <span class=\"time\">" . $graphItem['date'] . "</span>";
 						} else {
 							echo "<span />";
