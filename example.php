@@ -35,7 +35,7 @@
 				"author"=>$output[7],
 				"author_email"=>$output[8],
 				"short_rev"=>$output[9],
-				"subject"=>$output[10]
+				"subject"=>preg_replace('/(^|\s)(#[[:xdigit:]]+)(\s|$)/', '$1<a href="$2">$2</a>$3', $output[10])
 			);
 		}
 	}
@@ -79,7 +79,7 @@
 					foreach ($graphItems as $graphItem) {
 						echo "<li>";
 						if (isset($graphItem['rev'])) {
-							echo "<code>".$graphItem['short_rev']."</code> <strong>" . $graphItem['branch'] . "</strong> <em>" . $graphItem['subject'] . "</em> by <span class=\"author\">" . $graphItem['author'] . " &lt;" . $graphItem['author_email'] . "&gt;</span>  <span class=\"time\">" . $graphItem['date'] . "</span>";
+							echo "<code id='".$graphItem['short_rev']."'>".$graphItem['short_rev']."</code> <strong>" . $graphItem['branch'] . "</strong> <em>" . $graphItem['subject'] . "</em> by <span class=\"author\">" . $graphItem['author'] . " &lt;" . $graphItem['author_email'] . "&gt;</span>  <span class=\"time\">" . $graphItem['date'] . "</span>";
 						} else {
 							echo "<span />";
 						}
