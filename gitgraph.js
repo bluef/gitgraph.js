@@ -127,6 +127,19 @@ var gitGraph = function (canvas, rawGraphList, config) {
 		return i;
 	};
 	
+	var findLineBreak = function (row) {
+		if (!row) {
+			return -1
+		}
+		
+		var i = row.length;
+		
+		while (i-- &&
+		!(row[i - 1] && row[i - 2] && row[i] === " " && row[i - 1] === "|" && row[i - 2] === "_")) {}
+		
+		return i;
+	};
+	
 	var genNewFlow = function () {
 		var newId;
 		
@@ -173,7 +186,7 @@ var gitGraph = function (canvas, rawGraphList, config) {
 	};
 	
 	var draw = function (graphList) {
-		var colomn, colomnIndex, prevColomn, condenseIndex;
+		var colomn, colomnIndex, prevColomn, condenseIndex, breakIndex = -1;
 		var x, y;
 		var color;
 		var nodePos;
@@ -265,11 +278,24 @@ var gitGraph = function (canvas, rawGraphList, config) {
 			colomnIndex = 0; //reset index
 			condenseIndex = 0;
 			condensePrevLength = 0;
+			breakIndex = -1; //reset break index
 			while (colomnIndex < currentRow.length) {
 				colomn = currentRow[colomnIndex];
 				
 				if (colomn !== " " && colomn !== "_") {
 					++condensePrevLength;
+				}
+				
+				//check and fix line break in next row
+				if (colomn === "/" && currentRow[colomnIndex - 1] && currentRow[colomnIndex - 1] === "|") {
+					if ((breakIndex = findLineBreak(nextRow)) !== -1) {
+						nextRow.splice(breakIndex, 1);
+					}
+				}
+				//if line break found replace all '/' with '|' after breakIndex in previous row
+				if (breakIndex !== - 1 && colomn === "/" && colomnIndex > breakIndex) {
+					currentRow[colomnIndex] = "|";
+					colomn = "|";
 				}
 				
 				if (colomn === " " && 
