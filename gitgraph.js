@@ -125,7 +125,20 @@ var gitGraph = function (canvas, rawGraphList, config) {
 			!(row[i - 2] && row[i] === "_" && row[i - 2] === "|")) {}
 		
 		return i;
-	}
+	};
+	
+	var findLineBreak = function (row) {
+		if (!row) {
+			return -1
+		}
+		
+		var i = row.length;
+		
+		while (i-- &&
+		!(row[i - 1] && row[i - 2] && row[i] === " " && row[i - 1] === "|" && row[i - 2] === "_")) {}
+		
+		return i;
+	};
 	
 	var genNewFlow = function () {
 		var newId;
@@ -137,21 +150,21 @@ var gitGraph = function (canvas, rawGraphList, config) {
 		return {id:newId, color:"#" + newId};
 	};
 	
-	//draw method
-	var drawLineRight = function (x, y, color) {
+	//Draw methods
+	var drawLine = function (moveX, moveY, lineX, lineY, color) {
 		ctx.strokeStyle = color;
 		ctx.beginPath();
-		ctx.moveTo(x, y + config.unitSize / 2);
-		ctx.lineTo(x + config.unitSize, y + config.unitSize / 2);
+		ctx.moveTo(moveX, moveY);
+		ctx.lineTo(lineX, lineY);
 		ctx.stroke();
 	};
 	
+	var drawLineRight = function (x, y, color) {
+		drawLine(x, y + config.unitSize / 2, x + config.unitSize, y + config.unitSize / 2, color);
+	};
+	
 	var drawLineUp = function (x, y, color) {
-		ctx.strokeStyle = color;
-		ctx.beginPath();
-		ctx.moveTo(x, y + config.unitSize / 2);
-		ctx.lineTo(x, y - config.unitSize / 2);
-		ctx.stroke();
+		drawLine(x, y + config.unitSize / 2, x, y - config.unitSize / 2, color);
 	};
 	
 	var drawNode = function (x, y, color) {
@@ -165,37 +178,28 @@ var gitGraph = function (canvas, rawGraphList, config) {
 	};
 	
 	var drawLineIn = function (x, y, color) {
-		ctx.strokeStyle = color;
-		
-		ctx.beginPath();
-		ctx.moveTo(x + config.unitSize, y + config.unitSize / 2);
-		ctx.lineTo(x, y - config.unitSize / 2);
-		ctx.stroke();
+		drawLine(x + config.unitSize, y + config.unitSize / 2, x, y - config.unitSize / 2, color);
 	};
 	
 	var drawLineOut = function (x, y, color) {
-		ctx.strokeStyle = color;
-		ctx.beginPath();
-		ctx.moveTo(x, y + config.unitSize / 2);
-		ctx.lineTo(x + config.unitSize, y - config.unitSize / 2);
-		ctx.stroke();
+		drawLine(x, y + config.unitSize / 2, x + config.unitSize, y - config.unitSize / 2, color);
 	};
 	
 	var draw = function (graphList) {
-		var colomn, colomnIndex, prevColomn, condenseIndex;
+		var colomn, colomnIndex, prevColomn, condenseIndex, breakIndex = -1;
 		var x, y;
 		var color;
-		var nodePos, outPos;
+		var nodePos;
 		var tempFlow;
 		var prevRowLength = 0;
 		var flowSwapPos = -1;
 		var lastLinePos;
-		var i, k, l;
+		var i, l;
 		var condenseCurrentLength, condensePrevLength = 0, condenseNextLength = 0;
 		
 		var inlineIntersect = false;
 		
-		//initiate for first row
+		//initiate color array for first row
 		for (i = 0, l = graphList[0].length; i < l; i++) {
 			if (graphList[0][i] !== "_" && graphList[0][i] !== " ") {
 				flows.push(genNewFlow());
@@ -274,11 +278,24 @@ var gitGraph = function (canvas, rawGraphList, config) {
 			colomnIndex = 0; //reset index
 			condenseIndex = 0;
 			condensePrevLength = 0;
+			breakIndex = -1; //reset break index
 			while (colomnIndex < currentRow.length) {
 				colomn = currentRow[colomnIndex];
 				
 				if (colomn !== " " && colomn !== "_") {
 					++condensePrevLength;
+				}
+				
+				//check and fix line break in next row
+				if (colomn === "/" && currentRow[colomnIndex - 1] && currentRow[colomnIndex - 1] === "|") {
+					if ((breakIndex = findLineBreak(nextRow)) !== -1) {
+						nextRow.splice(breakIndex, 1);
+					}
+				}
+				//if line break found replace all '/' with '|' after breakIndex in previous row
+				if (breakIndex !== - 1 && colomn === "/" && colomnIndex > breakIndex) {
+					currentRow[colomnIndex] = "|";
+					colomn = "|";
 				}
 				
 				if (colomn === " " && 
@@ -293,7 +310,7 @@ var gitGraph = function (canvas, rawGraphList, config) {
 					colomn = "/";
 				}
 				
-				//create new flow only when no intersetc happened
+				//create new flow only when no intersect happened
 				if (flowSwapPos === -1 &&
 					colomn === "/" &&
 					currentRow[colomnIndex - 1] && 
